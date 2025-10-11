@@ -1,11 +1,16 @@
 package com.devsuperior.dsmeta.services;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
+import com.devsuperior.dsmeta.dto.SaleMinSummaryDTO;
+import com.devsuperior.dsmeta.dto.SaleMinVendaDTO;
 import com.devsuperior.dsmeta.entities.Sale;
 import com.devsuperior.dsmeta.repositories.SaleRepository;
 
@@ -20,4 +25,45 @@ public class SaleService {
 		Sale entity = result.get();
 		return new SaleMinDTO(entity);
 	}
+
+	public Page<SaleMinVendaDTO> findVendas(String minDate, String maxDate, String name, Pageable pageable) {
+		
+		LocalDate min = minDate.equals("") ? null : LocalDate.parse(minDate);
+        LocalDate max = maxDate.equals("") ? null : LocalDate.parse(maxDate);
+        
+        if (min == null) {
+            min = LocalDate.now().minusYears(1L);
+        }
+        if (max == null) {
+            max = LocalDate.now();
+        }
+        
+        Page<Sale> page = repository.findSales(min, max, name, pageable);
+        return page.map(sale -> new SaleMinVendaDTO(
+            sale.getId(), 
+            sale.getAmount(), 
+            sale.getSeller().getName(), 
+            sale.getDate()
+        ));
+	}
+
+    public Page<SaleMinSummaryDTO> findSummin(String minDate, String maxDate, Pageable pageable) {
+
+        LocalDate min = minDate.equals("") ? null : LocalDate.parse(minDate);
+        LocalDate max = maxDate.equals("") ? null : LocalDate.parse(maxDate);
+
+        if (min == null) {
+            min = LocalDate.now().minusYears(1L);
+        }
+        if (max == null) {
+            max = LocalDate.now();
+        }
+
+        Page<Sale> page = repository.findSummin(min, max, pageable);
+        return page.map(sale -> new SaleMinSummaryDTO(
+            sale.getSeller().getName(), 
+            sale.getAmount()
+        ));
+
+    }
 }
