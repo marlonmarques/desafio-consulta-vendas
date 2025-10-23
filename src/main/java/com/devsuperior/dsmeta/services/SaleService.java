@@ -1,6 +1,7 @@
 package com.devsuperior.dsmeta.services;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class SaleService {
 		return new SaleMinDTO(entity);
 	}
 
-	public Page<SaleMinVendaDTO> findVendas(String minDate, String maxDate, String name, Pageable pageable) {
+	public List<SaleMinVendaDTO> findVendas(String minDate, String maxDate, String name) {
 		
 		LocalDate min = minDate.equals("") ? null : LocalDate.parse(minDate);
         LocalDate max = maxDate.equals("") ? null : LocalDate.parse(maxDate);
@@ -38,16 +39,17 @@ public class SaleService {
             max = LocalDate.now();
         }
         
-        Page<Sale> page = repository.findSales(min, max, name, pageable);
-        return page.map(sale -> new SaleMinVendaDTO(
+        List<Sale> list = repository.findSales(min, max, name);
+        return list.stream().map(sale -> new SaleMinVendaDTO(
             sale.getId(), 
             sale.getAmount(), 
             sale.getSeller().getName(), 
             sale.getDate()
-        ));
+        )).toList();
+
 	}
 
-    public Page<SaleMinSummaryDTO> findSummin(String minDate, String maxDate, Pageable pageable) {
+    public List<SaleMinSummaryDTO> findSummin(String minDate, String maxDate) {
 
         LocalDate min = minDate.equals("") ? null : LocalDate.parse(minDate);
         LocalDate max = maxDate.equals("") ? null : LocalDate.parse(maxDate);
@@ -59,11 +61,11 @@ public class SaleService {
             max = LocalDate.now();
         }
 
-        Page<Sale> page = repository.findSummin(min, max, pageable);
-        return page.map(sale -> new SaleMinSummaryDTO(
+        List<Sale> page = repository.findSummin(min, max);
+        return page.stream().map(sale -> new SaleMinSummaryDTO(
             sale.getSeller().getName(), 
             sale.getAmount()
-        ));
+        )).toList();
 
     }
 }

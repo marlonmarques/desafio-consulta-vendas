@@ -1,6 +1,7 @@
 package com.devsuperior.dsmeta.repositories;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,10 +19,9 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
            "WHERE (:min IS NULL OR obj.date >= :min) " +
            "AND (:max IS NULL OR obj.date <= :max) " +
            "AND (:name IS NULL OR UPPER(obj.seller.name) LIKE UPPER(CONCAT('%', :name, '%')))")
-    Page<Sale> findSales(@Param("min") LocalDate min, 
+    List<Sale> findSales(@Param("min") LocalDate min, 
                          @Param("max") LocalDate max, 
-                         @Param("name") String name, 
-                         Pageable pageable);
+                         @Param("name") String name);
 
     //@EntityGraph(attributePaths = {"seller"})
     @Query(value = "SELECT obj FROM Sale obj " +
@@ -31,8 +31,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
            countQuery = "SELECT COUNT(obj) FROM Sale obj JOIN obj.seller "+
            "WHERE (:min IS NULL OR obj.date >= :min) " +
            "AND (:max IS NULL OR obj.date <= :max)")
-    Page<Sale> findSummin(
+    List<Sale> findSummin(
         @Param("min") LocalDate min, 
-        @Param("max") LocalDate max, 
-        Pageable pageable);
+        @Param("max") LocalDate max);
 }
