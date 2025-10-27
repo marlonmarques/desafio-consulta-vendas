@@ -27,7 +27,7 @@ public class SaleService {
 		return new SaleMinDTO(entity);
 	}
 
-	public List<SaleMinVendaDTO> findVendas(String minDate, String maxDate, String name) {
+    public Page<SaleMinVendaDTO> findVendasPage(String minDate, String maxDate, String name, Pageable pageable) {
 		
 		LocalDate min = minDate.equals("") ? null : LocalDate.parse(minDate);
         LocalDate max = maxDate.equals("") ? null : LocalDate.parse(maxDate);
@@ -39,14 +39,13 @@ public class SaleService {
             max = LocalDate.now();
         }
         
-        List<Sale> list = repository.findSales(min, max, name);
-        return list.stream().map(sale -> new SaleMinVendaDTO(
+        Page<Sale> page = repository.findSalesPage(min, max, name, pageable);
+        return page.map(sale -> new SaleMinVendaDTO(
             sale.getId(), 
             sale.getAmount(), 
             sale.getSeller().getName(), 
             sale.getDate()
-        )).toList();
-
+        ));
 	}
 
     public List<SaleMinSummaryDTO> findSummin(String minDate, String maxDate) {
@@ -68,4 +67,5 @@ public class SaleService {
         )).toList();
 
     }
+
 }

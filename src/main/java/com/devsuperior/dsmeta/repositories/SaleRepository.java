@@ -14,14 +14,17 @@ import com.devsuperior.dsmeta.entities.Sale;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 
+
     @EntityGraph(attributePaths = {"seller"})
     @Query("SELECT obj FROM Sale obj " +
            "WHERE (:min IS NULL OR obj.date >= :min) " +
            "AND (:max IS NULL OR obj.date <= :max) " +
            "AND (:name IS NULL OR UPPER(obj.seller.name) LIKE UPPER(CONCAT('%', :name, '%')))")
-    List<Sale> findSales(@Param("min") LocalDate min, 
-                         @Param("max") LocalDate max, 
-                         @Param("name") String name);
+    Page<Sale> findSalesPage(
+                     @Param("min") LocalDate min, 
+                     @Param("max") LocalDate max, 
+                     @Param("name") String name, 
+                     Pageable pageable);
 
     //@EntityGraph(attributePaths = {"seller"})
     @Query(value = "SELECT obj FROM Sale obj " +
@@ -32,6 +35,7 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
            "WHERE (:min IS NULL OR obj.date >= :min) " +
            "AND (:max IS NULL OR obj.date <= :max)")
     List<Sale> findSummin(
-        @Param("min") LocalDate min, 
-        @Param("max") LocalDate max);
+                     @Param("min") LocalDate min, 
+                     @Param("max") LocalDate max);
+
 }

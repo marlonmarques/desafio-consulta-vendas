@@ -31,13 +31,14 @@ public class SaleController {
 	}
 
 	@GetMapping(value = "/report")
-	public List<SaleMinVendaDTO> getReport(
+	public Page<SaleMinVendaDTO> getReport(
 		@RequestParam(value = "minDate", defaultValue = "") String minDate,
         @RequestParam(value = "maxDate", defaultValue = "") String maxDate,
-        @RequestParam(value = "name", defaultValue = "") String name
+        @RequestParam(value = "name", defaultValue = "") String name,
+		Pageable pageable
 	) {
 		// TODO
-		return service.findVendas(minDate, maxDate, name);
+		return service.findVendasPage(minDate, maxDate, name, pageable);
 	}
 
 	@GetMapping(value = "/summary")
