@@ -2,16 +2,16 @@ package com.devsuperior.dsmeta.dto;
 
 public class SaleMinSummaryDTO {
 
-    private String name;
+    private String sellerName;
     private Double total;
 
-    public SaleMinSummaryDTO(String name, Double total) {
-        this.name = name;
+    public SaleMinSummaryDTO(String sellerName, Double total) {
+        this.sellerName = sellerName;
         this.total = total;
     }
 
     public String getName() {
-        return name;
+        return sellerName;
     }
 
     public Double getTotal() {

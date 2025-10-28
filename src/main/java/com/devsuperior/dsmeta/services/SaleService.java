@@ -60,11 +60,7 @@ public class SaleService {
             max = LocalDate.now();
         }
 
-        List<Sale> page = repository.findSummin(min, max);
-        return page.stream().map(sale -> new SaleMinSummaryDTO(
-            sale.getSeller().getName(), 
-            sale.getAmount()
-        )).toList();
+        return repository.findSummin(min, max);
 
     }
 
